@@ -1,16 +1,16 @@
-import { fetchFile, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { load as parseHTML } from 'cheerio';
 import dayjs from 'dayjs';
 
-export interface RulateMetadata {
+export type RulateMetadata = {
   id: string;
   sourceSite: string;
   sourceName: string;
   filters?: Filters;
-}
+};
 
 class RulatePlugin implements Plugin.PluginBase {
   id: string;
@@ -23,9 +23,9 @@ class RulatePlugin implements Plugin.PluginBase {
   constructor(metadata: RulateMetadata) {
     this.id = metadata.id;
     this.name = metadata.sourceName;
-    this.icon = `multisrc/rulate/icons/${metadata.id}.png`;
+    this.icon = `multisrc/rulate/${metadata.id.toLowerCase()}/icon.png`;
     this.site = metadata.sourceSite;
-    this.version = '1.0.0';
+    this.version = '1.0.1';
     this.filters = metadata.filters;
   }
 
@@ -80,12 +80,10 @@ class RulatePlugin implements Plugin.PluginBase {
       formData.append('path', novelPath);
       formData.append('ok', 'Да');
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: 'POST',
         body: formData,
       });
-
-      result = await fetchApi(this.site + novelPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
@@ -183,24 +181,16 @@ class RulatePlugin implements Plugin.PluginBase {
     let result = await fetchApi(this.site + chapterPath);
     if (result.url.includes('mature?path=')) {
       const formData = new FormData();
+      formData.append('path', chapterPath.split('/').slice(0, 3).join('/'));
       formData.append('ok', 'Да');
 
-      await fetchApi(result.url, {
+      result = await fetchApi(result.url, {
         method: 'POST',
         body: formData,
       });
-
-      result = await fetchApi(this.site + chapterPath);
     }
     const body = await result.text();
     const loadedCheerio = parseHTML(body);
-
-    loadedCheerio('.content-text img').each((index, element) => {
-      if (!loadedCheerio(element).attr('src')?.startsWith('http')) {
-        const src = loadedCheerio(element).attr('src');
-        loadedCheerio(element).attr('src', this.site + src);
-      }
-    });
 
     const chapterText = loadedCheerio('.content-text').html();
     return chapterText || '';
@@ -208,12 +198,11 @@ class RulatePlugin implements Plugin.PluginBase {
 
   async searchNovels(searchTerm: string): Promise<Plugin.NovelItem[]> {
     const novels: Plugin.NovelItem[] = [];
-    const result = await fetchApi(
+    const result: response[] = await fetchApi(
       this.site + '/search/autocomplete?query=' + searchTerm,
-    );
-    const json = (await result.json()) as response[];
+    ).then(res => res.json());
 
-    json.forEach(novel => {
+    result.forEach(novel => {
       const name = novel.title_one + ' / ' + novel.title_two;
       if (!novel.url) return;
 
@@ -228,7 +217,7 @@ class RulatePlugin implements Plugin.PluginBase {
   }
 
   parseDate = (dateString: string | undefined = '') => {
-    const months: { [key: string]: number } = {
+    const months: Record<string, number> = {
       'янв.': 1,
       'февр.': 2,
       'мар.': 3,
@@ -250,14 +239,12 @@ class RulatePlugin implements Plugin.PluginBase {
     }
     return dateString || null;
   };
-
-  fetchImage = fetchFile;
 }
 
-interface response {
+type response = {
   id: number;
   title_one: string;
   title_two: string;
   url: string;
   img: string;
-}
+};
