@@ -1,3 +1,6 @@
+# DO NOT EDIT
+# THIS FILE IS AUTO GENERATED FROM blank_report_issue.yml in the .github/scripts folder.
+
 name: Issue report
 description: Report a source issue in LNReader
 labels: [Bug]
@@ -21,9 +24,12 @@ body:
         - "‎العربية: Riwyat"
         - "‎العربية: Sunovels"
         - "中文, 汉语, 漢語: 69书吧"
+        - "中文, 汉语, 漢語: 爱下电子书"
         - "中文, 汉语, 漢語: linovel"
         - "中文, 汉语, 漢語: Linovelib"
         - "中文, 汉语, 漢語: Linovelib(繁體)"
+        - "中文, 汉语, 漢語: Novel543"
+        - "中文, 汉语, 漢語: Quanben"
         - "English: FirstKissNovel"
         - "English: AllNovel"
         - "English: AllNovelFull"
@@ -42,12 +48,14 @@ body:
         - "English: DaoTranslate"
         - "English: Divine Dao Library"
         - "English: Dearest Rosalie"
+        - "English: Dragonholic"
         - "English: Dragon Tea"
         - "English: Dream Big Translations"
         - "English: Dusk Blossoms"
         - "English: Early Novel"
         - "English: ElloTL"
         - "English: Eternalune"
+        - "English: Etude Translations"
         - "English: FanNovel"
         - "English: Fans Translations"
         - "English: Fenrir Realm"
@@ -63,6 +71,7 @@ body:
         - "English: HotNovelPub"
         - "English: Inkitt"
         - "English: Ippotranslations"
+        - "English: KDT Novels"
         - "English: Keopi Translations"
         - "English: KnoxT"
         - "English: Lazy Girl Translations"
@@ -93,6 +102,7 @@ body:
         - "English: NobleMTL"
         - "English: Novel Bin"
         - "English: NovelBuddy.io"
+        - "English: NovelCool"
         - "English: Novel Fire"
         - "English: NovelFull"
         - "English: Novel Hall"
@@ -109,6 +119,7 @@ body:
         - "English: Prizma"
         - "English: Rainofsnow"
         - "English: Ranobes"
+        - "English: Ranovel"
         - "English: Read Fanfic"
         - "English: Read From Net"
         - "English: ReadNovelFull"
@@ -131,6 +142,7 @@ body:
         - "English: VyNovel"
         - "English: Webnovel"
         - "English: WebNovelLover"
+        - "English: Web Novel Translation"
         - "English: Web Novel Pub"
         - "English: White Moonlight Novels"
         - "English: Wook's Teahouse"
@@ -148,6 +160,7 @@ body:
         - "Français: HarkenEliwood"
         - "Français: KissWood"
         - "Français: Ligh Novel FR"
+        - "Français: MassNovel"
         - "Français: MTL Novel (FR)"
         - "Français: NovelDeGlace"
         - "Français: Novhell"
@@ -191,6 +204,7 @@ body:
         - "Русский: Jaomix"
         - "Русский: MTL Novel (RU)"
         - "Русский: Neobook"
+        - "Русский: NovelCool (RU)"
         - "Русский: НовелОВХ"
         - "Русский: Ranobes (RU)"
         - "Русский: Renovels"
@@ -203,6 +217,7 @@ body:
         - "Русский: ТопЛиба"
         - "Русский: Целлюлоза"
         - "Español: AllNovelRead"
+        - "Español: AnimesHoy12"
         - "Español: Hasu Translations"
         - "Español: LightNovelDaily"
         - "Español: MTL Novel (ES)"
@@ -211,6 +226,7 @@ body:
         - "Español: Pancho Translations"
         - "Español: ReinoWuxia"
         - "Español: SkyNovels"
+        - "Español: TC & Sega"
         - "Español: Traducciones Amistosas"
         - "Español: TuNovelaLigera"
         - "Español: Yuuki Tls"
@@ -219,12 +235,12 @@ body:
         - "Türkçe: Araz Novel"
         - "Türkçe: E-KİTAPLAR"
         - "Türkçe: EpikNovel"
+        - "Türkçe: kakikata"
         - "Türkçe: Kodeks Library"
         - "Türkçe: MangaTR"
         - "Türkçe: NABİ SCANS"
         - "Türkçe: Namevt"
         - "Türkçe: Novel oku"
-        - "Türkçe: Novelokutr"
         - "Türkçe: NovelTR"
         - "Türkçe: Ragnar Scans"
         - "Türkçe: ThNovels"
@@ -299,7 +315,18 @@ body:
       description: |
         You can find your LNReader version in **More → About**.
       placeholder: |
-        Example: "1.1.19"
+        Example: "2.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: |
+        You can find your Plugin version in **Browse → Installed** and scrolling to the desired source.
+      placeholder: |
+        Example: "1.0.1"
     validations:
       required: true
 
@@ -310,7 +337,7 @@ body:
       description: |
         You can find this somewhere in your Android settings.
       placeholder: |
-        Example: "Android 11"
+        Example: "Android 15"
     validations:
       required: true
 
@@ -331,7 +358,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have updated the app to version **[1.1.19](https://github.com/LNReader/lnreader/releases/latest)**.
+        - label: I have updated the app to version **[2.0.0](https://github.com/LNReader/lnreader/releases/tag/v2.0.0-beta.3).**
           required: true
         - label: I have updated all installed extensions.
           required: true
