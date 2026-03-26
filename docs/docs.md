@@ -5,13 +5,14 @@
   - [SourceNovel](#sourcenovel)
   - [ChapterItem](#chapteritem)
   - [Filters](#filters)
+  - [PluginSettings](#pluginsettings)
 - [Using Cheerio](#using-cheerio)
 - [Custom fetching functions](#custom-fetching-functions)
 
 Most of the Plugin/Novel type definitions accessed using the `Plugin` namespace imported via
 
 ```ts
-import { Plugin } from "@typings/plugin";
+import { Plugin } from '@/types/plugin';
 ```
 
 ### PluginBase
@@ -31,6 +32,7 @@ class ExamplePlugin implements Plugin.PluginBase {}
 | [version](#pluginbaseversion)                                  | yes      | Plugin version                                        |
 | [imageRequestInit](#pluginbaseimagerequestinit)                | no       | Plugin Image Request Init                             |
 | [filters](#pluginbasefilters)                                  | no       | [Filter definition](#filter-definition-object) object |
+| [pluginSettings](#pluginbasepluginsettings)                    | no       | [Plugin settings](#pluginsettings) object             |
 | [popularNovels(page, options)](#pluginbasepopularnovels)       | yes      | Novel list getter                                     |
 | [parseNovelAndChapters(url)](#pluginbaseparsenovelandchapters) | yes      | Novel info and chapter list getter                    |
 | [parseChapter(url)](#pluginbaseparsechapter)                   | yes      | Chapter text getter                                   |
@@ -349,23 +351,24 @@ It is an object representing information how to store/access the novel
 You can use the default `Cover not available` cover by importing
 
 ```ts
-import { defaultCover } from "@libs/defaultCover";
+import { defaultCover } from '@libs/defaultCover';
 ```
 
 ---
 
 ### SourceNovel
 
-| Field | Type   | Required | Desciption |
-| ----- | ------ | -------- | ---------- |
-| url   | string | yes      |            |
-| name  | string | no       | string     |
-|cover|`string`|no||
-|genres|`string`|no||
-|summary|`string`|no||
-|author|`string`|no||
-|artist|`string`|no||
-|status|[NovelStatus] or `string`|no||
+| Field   | Type                      | Required | Desciption |
+| ------- | ------------------------- | -------- | ---------- |
+| url     | string                    | yes      |            |
+| name    | string                    | no       | string     |
+| cover   | `string`                  | no       |            |
+| genres  | `string`                  | no       |            |
+| summary | `string`                  | no       |            |
+| author  | `string`                  | no       |            |
+| artist  | `string`                  | no       |            |
+| status  | [NovelStatus] or `string` | no       |            |
+
         chapters?: ChapterItem[];
 
 ---
@@ -379,7 +382,7 @@ import { defaultCover } from "@libs/defaultCover";
 `Filters` and `FilterTypes` are not in the `Plugin` namespace and are from `@libs/filterInputs` file:
 
 ```ts
-import { FilterTypes, Filters } from "@libs/filterInputs";
+import { FilterTypes, Filters } from '@libs/filterInputs';
 ```
 
 There are 2 main objects when using filters:
@@ -418,11 +421,11 @@ options.filters.order
 filters = {
   genre: {
     type: FilterTypes.CheckboxGroup,
-    label: "Genres",
+    label: 'Genres',
     value: [],
     options: [
-      { label: "Isekai", value: "isekai" },
-      { label: "Romance", value: "romans" },
+      { label: 'Isekai', value: 'isekai' },
+      { label: 'Romance', value: 'romans' },
     ],
   },
 } satisfies Filters;
@@ -445,12 +448,12 @@ Types of filters supported
 ```ts
 options: [
   {
-    label: "default", // in-app label
-    value: "", // in-code value
+    label: 'default', // in-app label
+    value: '', // in-code value
   },
   {
-    label: "Value ABC",
-    value: "abc",
+    label: 'Value ABC',
+    value: 'abc',
   },
 ];
 ```
@@ -460,12 +463,12 @@ options: [
 ```ts
 options: [
   {
-    label: "Value ABC", // in-app label
-    value: "abc", // in-code value
+    label: 'Value ABC', // in-app label
+    value: 'abc', // in-code value
   },
   {
-    label: "Value DEF",
-    value: "def",
+    label: 'Value DEF',
+    value: 'def',
   },
 ];
 ```
@@ -504,6 +507,129 @@ options.filters.abc.type; // type of the filter
     excluded: string[]  // options with excluded selected
 }
 ```
+
+---
+
+### PluginSettings
+
+Plugin settings allow plugins to define user-configurable options that are displayed in the app's settings UI. These settings are persistent and can be accessed within the plugin code.
+
+#### PluginBase::pluginSettings
+
+A user-defined object that defines configurable settings for the plugin. Each property of this object is a different setting that will be displayed in the app's settings UI.
+
+```ts
+pluginSettings = {
+    settingKey: {
+        value: '',
+        label: 'Setting Label',
+        type: 'Text', // optional, defaults to 'Text'
+    },
+};
+```
+
+##### Setting Properties
+
+| Name    | Type     | Required | Description                                    |
+| ------- | -------- | -------- | ---------------------------------------------- |
+| value   | `string` | yes      | Default value for this setting                 |
+| label   | `string` | yes      | Display label shown in the app's settings UI   |
+| type    | `string` | no       | Type of the setting UI component (see below)   |
+
+##### Setting Types
+
+Currently, two setting types are supported:
+
+| Type     | Description                                    | UI Component | Default Value Type |
+| -------- | ---------------------------------------------- | ------------ | ------------------ |
+| `Switch` | A boolean toggle switch                        | SwitchItem   | `boolean`          |
+| `Text`   | A text input field (default if type is omitted) | TextInput    | `string`           |
+
+> [!NOTE]
+> If `type` is not specified, the setting defaults to `Text` type and will be rendered as a TextInput.
+
+##### Accessing Settings Values
+
+Settings values are stored and can be accessed using the `storage` utility:
+
+```ts
+import { storage } from '@libs/storage';
+
+// Get a setting value
+const settingValue = storage.get('settingKey');
+
+// Set a setting value
+storage.set('settingKey', 'newValue');
+```
+
+##### Examples
+
+###### Example 1: Switch Setting
+
+```ts
+class ExamplePlugin implements Plugin.PluginBase {
+    ...
+    hideLocked = storage.get('hideLocked');
+    
+    pluginSettings = {
+        hideLocked: {
+            value: '',
+            label: 'Hide locked chapters',
+            type: 'Switch',
+        },
+    };
+    
+    async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
+        // Use the setting value
+        if (this.hideLocked) {
+            // Filter out locked chapters
+        }
+        ...
+    }
+    ...
+}
+```
+
+###### Example 2: Text Settings
+
+```ts
+class ExamplePlugin implements Plugin.PluginBase {
+    ...
+    site = storage.get('url');
+    email = storage.get('email');
+    password = storage.get('password');
+    
+    pluginSettings = {
+        url: {
+            value: '',
+            label: 'URL',
+            // type: 'Text' is optional
+        },
+        email: {
+            value: '',
+            label: 'Email',
+            type: 'Text',
+        },
+        password: {
+            value: '',
+            label: 'Password',
+            // type defaults to 'Text' if omitted
+        },
+    };
+    
+    async makeRequest(url: string): Promise<string> {
+        return await fetchApi(url, {
+            headers: {
+                'Authorization': `Basic ${this.btoa(this.email + ':' + this.password)}`,
+            },
+            Referer: this.site,
+        }).then(res => res.text());
+    }
+    ...
+}
+```
+
+---
 
 ### Using Cheerio
 
